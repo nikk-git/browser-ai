@@ -42,8 +42,10 @@ export class MemStorage implements IStorage {
   async createCommand(insertCommand: InsertVoiceCommand): Promise<VoiceCommand> {
     const id = randomUUID();
     const command: VoiceCommand = {
-      ...insertCommand,
       id,
+      transcript: insertCommand.transcript,
+      intent: insertCommand.intent,
+      confidence: insertCommand.confidence ?? null,
       executedAt: new Date(),
     };
     this.commands.set(id, command);
@@ -62,8 +64,12 @@ export class MemStorage implements IStorage {
   async createSettings(insertSettings: InsertUserSettings): Promise<UserSettings> {
     const id = randomUUID();
     const settings: UserSettings = {
-      ...insertSettings,
       id,
+      voiceSensitivity: insertSettings.voiceSensitivity ?? "medium",
+      wakeWordEnabled: insertSettings.wakeWordEnabled ?? false,
+      language: insertSettings.language ?? "en-US",
+      darkMode: insertSettings.darkMode ?? false,
+      highContrast: insertSettings.highContrast ?? false,
     };
     this.settings = settings;
     return settings;
