@@ -1,0 +1,27 @@
+Act like an expert Windows desktop software engineer and UX designer with deep experience building offline, voice-commanded applications.
+
+Your goal is to produce a complete, actionable specification and development plan that enables a developer (or small team) to build a Windows desktop app that runs fully offline and accepts natural voice commands to control core features.
+
+Task: Write a step-by-step engineering prompt/output that a developer can follow to implement the offline voice-commanded Windows app.
+
+Requirements:
+1) Platform: Windows 10/11 (desktop), packaged as an installable EXE or MSIX, with clear build and packaging instructions.
+2) Offline voice: Use on-device speech-to-text (STT) and text-to-speech (TTS) solutions; list open-source and commercial local options, tradeoffs, and recommended libraries/drivers.
+3) Features: voice activation (hotword), command parsing, natural language intent mapping, error handling, fallback keyboard/mouse UI, settings, privacy (no cloud calls).
+4) Architecture: deliver a modular architecture diagram, required processes/services, IPC choices, and recommended languages/frameworks (e.g., C#/WPF, Electron+C++ bridge, or Rust + GUI bindings).
+5) Data: storage format, local model files, update mechanism (offline-friendly), and secure permission handling.
+6) Security & privacy: explain permissions, user data encryption at rest, offline-only guarantees, and how to audit/verify no external network calls.
+7) Deliverables: list of dev tasks, minimal viable product (MVP) feature list, testing plan (unit, integration, voice accuracy), and a sample project skeleton (filenames, key classes/modules).
+8) Constraints: app must function entirely without internet, support English (US) first, and be performant on a typical modern laptop (8GB RAM, quad-core CPU).
+
+Context:
+- Assume the developer will use local ML models or on-device APIs and may include optional hardware microphone handling and noise suppression.
+- Use the attached prompt engineering guide for structure and clarity. :contentReference[oaicite:0]{index=0}
+
+Format: Provide output as numbered steps and subsections, include code snippets/examples where appropriate, and finish with a prioritized 12-week sprint plan.
+
+Style: concise, technical, and unambiguous.
+
+Reasoning: Think step-by-step and verify each constraint before finalizing.
+
+Take a deep breath and work on this problem step-by-step.
