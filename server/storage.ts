@@ -1,37 +1,93 @@
-import { type User, type InsertUser } from "@shared/schema";
+import {
+  type VoiceCommand,
+  type InsertVoiceCommand,
+  type UserSettings,
+  type InsertUserSettings,
+  type UpdateUserSettings,
+} from "@shared/schema";
 import { randomUUID } from "crypto";
 
-// modify the interface with any CRUD methods
-// you might need
-
 export interface IStorage {
-  getUser(id: string): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  // Voice Commands
+  getCommands(): Promise<VoiceCommand[]>;
+  getCommand(id: string): Promise<VoiceCommand | undefined>;
+  createCommand(command: InsertVoiceCommand): Promise<VoiceCommand>;
+  deleteAllCommands(): Promise<void>;
+
+  // User Settings
+  getSettings(): Promise<UserSettings | undefined>;
+  createSettings(settings: InsertUserSettings): Promise<UserSettings>;
+  updateSettings(settings: UpdateUserSettings): Promise<UserSettings>;
 }
 
 export class MemStorage implements IStorage {
-  private users: Map<string, User>;
+  private commands: Map<string, VoiceCommand>;
+  private settings: UserSettings | undefined;
 
   constructor() {
-    this.users = new Map();
+    this.commands = new Map();
+    this.settings = undefined;
   }
 
-  async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+  // Voice Commands
+  async getCommands(): Promise<VoiceCommand[]> {
+    return Array.from(this.commands.values())
+      .sort((a, b) => new Date(b.executedAt).getTime() - new Date(a.executedAt).getTime());
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+  async getCommand(id: string): Promise<VoiceCommand | undefined> {
+    return this.commands.get(id);
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
+  async createCommand(insertCommand: InsertVoiceCommand): Promise<VoiceCommand> {
     const id = randomUUID();
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+    const command: VoiceCommand = {
+      ...insertCommand,
+      id,
+      executedAt: new Date(),
+    };
+    this.commands.set(id, command);
+    return command;
+  }
+
+  async deleteAllCommands(): Promise<void> {
+    this.commands.clear();
+  }
+
+  // User Settings
+  async getSettings(): Promise<UserSettings | undefined> {
+    return this.settings;
+  }
+
+  async createSettings(insertSettings: InsertUserSettings): Promise<UserSettings> {
+    const id = randomUUID();
+    const settings: UserSettings = {
+      ...insertSettings,
+      id,
+    };
+    this.settings = settings;
+    return settings;
+  }
+
+  async updateSettings(updateSettings: UpdateUserSettings): Promise<UserSettings> {
+    if (!this.settings) {
+      // Create default settings if none exist
+      this.settings = {
+        id: randomUUID(),
+        voiceSensitivity: "medium",
+        wakeWordEnabled: false,
+        language: "en-US",
+        darkMode: false,
+        highContrast: false,
+      };
+    }
+
+    this.settings = {
+      ...this.settings,
+      ...updateSettings,
+    };
+
+    return this.settings;
   }
 }
 
